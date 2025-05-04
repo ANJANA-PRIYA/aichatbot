@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gemini Chatbot</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    /* Full-Screen Layout */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #121212; /* Dark background */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      color: #f1f1f1; /* Light text color */
+    }
+
+    /* Chat Container */
+    #chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #1f1f1f; /* Dark background for chat */
+      border-radius: 15px;
+      max-width: 100%;
+    }
+
+    /* Chat Messages Section */
+    #chat {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Message Styling */
+    .msg {
+      margin: 0.5rem 0;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      max-width: 80%;
+      word-wrap: break-word;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    /* User message (Right-Aligned) */
+    .user {
+      background: #4a4a4a; /* Slightly lighter gray for user */
+      align-self: flex-end; /* Right-aligned */
+      text-align: right;
+    }
+
+    /* Bot message (Left-Aligned) */
+    .bot {
+      background: #333333; /* Dark background for bot */
+      align-self: flex-start; /* Left-aligned */
+      text-align: left;
+    }
+
+    .bot .typing {
+      font-size: 0.9rem;
+      color: #888;
+      display: inline-block;
+      padding-left: 10px;
+      animation: typing 1.5s steps(5) infinite;
+    }
+
+    /* Input area */
+    #chatForm {
+      display: flex;
+      padding: 1rem;
+      border-top: 1px solid #444;
+      background: #1f1f1f; /* Dark background for input */
+    }
+
+    /* Input Field */
+    #msg {
+      flex: 1;
+      padding: 0.6rem;
+      border: 1px solid #444;
+      border-radius: 8px;
+      outline: none;
+      background: #333;
+      color: #fff; /* Light text in input */
+    }
+
+    /* File Input */
+    #file {
+      margin-left: 0.5rem;
+    }
+
+    /* Send Button */
+    button {
+      margin-left: 0.5rem;
+      padding: 0.6rem 1rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    /* Emoji Picker */
+    .emoji-picker {
+      font-size: 1.5rem;
+      cursor: pointer;
+      margin-left: 0.5rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes typing {
+      0% { content: "typing"; }
+      100% { content: "..."; }
+    }
+
+  </style>
+</head>
+<body>
+  <div id="chat-container">
+    <div id="chat"></div>
+    <form id="chatForm" enctype="multipart/form-data">
+      <input type="text" name="msg" id="msg" placeholder="Type a message..." required />
+      <input type="file" name="file" id="file" />
+      <button type="submit">Send</button>
+      <span class="emoji-picker" onclick="addEmoji('😊')">😊</span>
+      <span class="emoji-picker" onclick="addEmoji('😂')">😂</span>
+      <span class="emoji-picker" onclick="addEmoji('😢')">😢</span>
+      <span class="emoji-picker" onclick="addEmoji('😎')">😎</span>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("chatForm");
+    const chat = document.getElementById("chat");
+    const msgInput = document.getElementById("msg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const userMsg = msgInput.value;
+      const fileInput = document.getElementById("file");
+
+      const formData = new FormData();
+      formData.append("msg", userMsg);
+      if (fileInput.files[0]) {
+        formData.append("file", fileInput.files[0]);
+      }
+
+      // Show user message
+      const userDiv = document.createElement("div");
+      userDiv.className = "msg user";
+      userDiv.textContent = userMsg;
+      chat.appendChild(userDiv);
+      chat.scrollTop = chat.scrollHeight;
+
+      msgInput.value = "";
+      fileInput.value = "";
+
+      // Show typing animation for the bot
+      const botTypingDiv = document.createElement("div");
+      botTypingDiv.className = "msg bot";
+      const typingText = document.createElement("span");
+      typingText.className = "typing";
+      typingText.textContent = "Bot is typing...";
+      botTypingDiv.appendChild(typingText);
+      chat.appendChild(botTypingDiv);
+      chat.scrollTop = chat.scrollHeight;
+
+      // Send user message to server
+      const res = await fetch("/get", {
+        method: "POST",
+        body: formData
+      });
+
+      // Remove typing animation after 1 second
+      setTimeout(() => {
+        botTypingDiv.remove();
+      }, 1000);
+
+      const text = await res.text();
+
+      // Show bot response
+      const botDiv = document.createElement("div");
+      botDiv.className = "msg bot";
+      botDiv.textContent = text;
+      chat.appendChild(botDiv);
+      chat.scrollTop = chat.scrollHeight;
+    });
+
+    // Function to insert emojis into input field
+    function addEmoji(emoji) {
+      msgInput.value += emoji;
+      msgInput.focus();
+    }
+  </script>
+</body>
+</html>
