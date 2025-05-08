@@ -90,8 +90,8 @@ function attachEventListeners() {
     const attachmentButton = document.getElementById("attachment");
     const fileInput = document.getElementById("fileInput");
 
+    // Combine button click and enter key handling
     sendButton.addEventListener("click", sendMessage);
-
     inputField.addEventListener("keypress", (event) => {
         if (event.key === "Enter") {
             sendMessage();
@@ -103,7 +103,7 @@ function attachEventListeners() {
         fileInput.click();
     });
 
-    // Store selected file
+    // Store selected file and notify user
     fileInput.addEventListener("change", (event) => {
         selectedFile = event.target.files[0];
         appendMessage("user", `Selected File: ${selectedFile.name}`);
@@ -112,30 +112,3 @@ function attachEventListeners() {
 
 // Initialize the chat application when the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", attachEventListeners);
-$(document).ready(function () {
-    console.log("jQuery ready!");
-  
-    $("#send").click(function () {
-      const message = $("#text").val();
-  
-      const formData = new FormData();
-      formData.append("msg", message);
-  
-      $.ajax({
-        type: "POST",
-        url: "/get",
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (data) {
-          console.log("Response:", data);
-          alert("AI Response: " + data);
-        },
-        error: function (err) {
-          console.error("Error calling /get:", err);
-          alert("Error occurred while calling backend.");
-        },
-      });
-    });
-  });
-  
