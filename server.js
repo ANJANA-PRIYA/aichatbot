@@ -34,6 +34,10 @@ app.post('/get', upload.single('file'), async (req, res) => {
   const userInput = req.body.msg;
   const file = req.file;
 
+  if (!userInput) {
+    return res.status(400).send("❌ Missing 'msg' parameter in the request.");
+  }
+
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     const prompt = [userInput];
@@ -52,14 +56,21 @@ app.post('/get', upload.single('file'), async (req, res) => {
     console.log("🚀 Prompt:", prompt);
     const result = await model.generateContent(prompt);
 
-    const output = result.response.text();
+    const output = result.response.text;  // Corrected if necessary for your actual output structure
     console.log("✅ Gemini output:", output);
-    res.send(output);
+    res.json({ text: output });  // Ensure response is returned in JSON format
   } catch (err) {
     console.error("❌ Gemini error:", err.message || err);
     res.status(500).send("An error occurred while generating the response.");
   } finally {
-    if (file) fs.unlinkSync(file.path);
+    // Ensure the file is deleted after processing, regardless of success or failure
+    if (file) {
+      try {
+        fs.unlinkSync(file.path);
+      } catch (deleteError) {
+        console.error("❌ Error deleting file:", deleteError.message);
+      }
+    }
   }
 });
 
