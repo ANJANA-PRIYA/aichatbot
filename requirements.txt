@@ -2,5 +2,6 @@ streamlit
 google-generativeai
 python-dotenv
 flask
+serverless-wsgi
 flask-cors
 
