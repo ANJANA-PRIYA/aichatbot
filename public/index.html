@@ -7,30 +7,27 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
 
   <style>
-    /* Full-Screen Layout */
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
-      background: #121212; /* Dark background */
+      background: #121212;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       flex-direction: column;
-      color: #f1f1f1; /* Light text color */
+      color: #f1f1f1;
     }
 
-    /* Chat Container */
     #chat-container {
       flex: 1;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      background: #1f1f1f; /* Dark background for chat */
+      background: #1f1f1f;
       border-radius: 15px;
       max-width: 100%;
     }
 
-    /* Chat Messages Section */
     #chat {
       flex: 1;
       padding: 1rem;
@@ -39,7 +36,6 @@
       flex-direction: column;
     }
 
-    /* Message Styling */
     .msg {
       margin: 0.5rem 0;
       padding: 0.8rem 1rem;
@@ -49,17 +45,15 @@
       animation: fadeIn 0.3s ease-in-out;
     }
 
-    /* User message (Right-Aligned) */
     .user {
-      background: #4a4a4a; /* Slightly lighter gray for user */
-      align-self: flex-end; /* Right-aligned */
+      background: #4a4a4a;
+      align-self: flex-end;
       text-align: right;
     }
 
-    /* Bot message (Left-Aligned) */
     .bot {
-      background: #333333; /* Dark background for bot */
-      align-self: flex-start; /* Left-aligned */
+      background: #333333;
+      align-self: flex-start;
       text-align: left;
     }
 
@@ -71,15 +65,13 @@
       animation: typing 1.5s steps(5) infinite;
     }
 
-    /* Input area */
     #chatForm {
       display: flex;
       padding: 1rem;
       border-top: 1px solid #444;
-      background: #1f1f1f; /* Dark background for input */
+      background: #1f1f1f;
     }
 
-    /* Input Field */
     #msg {
       flex: 1;
       padding: 0.6rem;
@@ -87,15 +79,13 @@
       border-radius: 8px;
       outline: none;
       background: #333;
-      color: #fff; /* Light text in input */
+      color: #fff;
     }
 
-    /* File Input */
     #file {
       margin-left: 0.5rem;
     }
 
-    /* Send Button */
     button {
       margin-left: 0.5rem;
       padding: 0.6rem 1rem;
@@ -110,7 +100,6 @@
       background: #0056b3;
     }
 
-    /* Emoji Picker */
     .emoji-picker {
       font-size: 1.5rem;
       cursor: pointer;
@@ -126,7 +115,6 @@
       0% { content: "typing"; }
       100% { content: "..."; }
     }
-
   </style>
 </head>
 <body>
@@ -136,6 +124,7 @@
       <input type="text" name="msg" id="msg" placeholder="Type a message..." required />
       <input type="file" name="file" id="file" />
       <button type="submit">Send</button>
+      <!-- Emoji Picker -->
       <span class="emoji-picker" onclick="addEmoji('😊')">😊</span>
       <span class="emoji-picker" onclick="addEmoji('😂')">😂</span>
       <span class="emoji-picker" onclick="addEmoji('😢')">😢</span>
@@ -179,7 +168,7 @@
       chat.appendChild(botTypingDiv);
       chat.scrollTop = chat.scrollHeight;
 
-      // Send user message to server
+      // Send user message to Flask backend
       const res = await fetch("/get", {
         method: "POST",
         body: formData
@@ -190,17 +179,16 @@
         botTypingDiv.remove();
       }, 1000);
 
-      const text = await res.text();
+      const data = await res.json();
 
       // Show bot response
       const botDiv = document.createElement("div");
       botDiv.className = "msg bot";
-      botDiv.textContent = text;
+      botDiv.textContent = data.text;
       chat.appendChild(botDiv);
       chat.scrollTop = chat.scrollHeight;
     });
 
-    // Function to insert emojis into input field
     function addEmoji(emoji) {
       msgInput.value += emoji;
       msgInput.focus();
@@ -208,3 +196,5 @@
   </script>
 </body>
 </html>
+
+  
