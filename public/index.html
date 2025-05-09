@@ -168,25 +168,36 @@
       chat.appendChild(botTypingDiv);
       chat.scrollTop = chat.scrollHeight;
 
-      // Send user message to Flask backend
-      const res = await fetch("/get", {
-        method: "POST",
-        body: formData
-      });
+      try {
+        // Send user message to Flask backend (update here)
+        const res = await fetch("/api/get", {
+          method: "POST",
+          body: formData
+        });
 
-      // Remove typing animation after 1 second
-      setTimeout(() => {
+        // Parse response
+        const data = await res.json();
+
+        // Remove typing animation
         botTypingDiv.remove();
-      }, 1000);
 
-      const data = await res.json();
+        // Show bot response
+        const botDiv = document.createElement("div");
+        botDiv.className = "msg bot";
+        botDiv.textContent = data.text;
+        chat.appendChild(botDiv);
+        chat.scrollTop = chat.scrollHeight;
 
-      // Show bot response
-      const botDiv = document.createElement("div");
-      botDiv.className = "msg bot";
-      botDiv.textContent = data.text;
-      chat.appendChild(botDiv);
-      chat.scrollTop = chat.scrollHeight;
+      } catch (error) {
+        botTypingDiv.remove();
+
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "msg bot";
+        errorDiv.textContent = "Failed to fetch response. Please try again.";
+        chat.appendChild(errorDiv);
+        chat.scrollTop = chat.scrollHeight;
+        console.error("Fetch error:", error);
+      }
     });
 
     function addEmoji(emoji) {
