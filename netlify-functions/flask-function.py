@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
-from serverless_wsgi import handle_request  # Make sure you're using 'serverless_wsgi' not 'serverless'
+from serverless_wsgi import handle_request  # Ensure correct library
 
 app = Flask(__name__)
 
-@app.route("/get", methods=["POST"])
+# Updated route to match frontend and Netlify redirect
+@app.route("/api/get", methods=["POST"])
 def chatbot():
     user_msg = request.form.get("msg", "")
     file = request.files.get("file", None)
@@ -19,6 +20,5 @@ def chatbot():
 # Lambda handler for Netlify
 def handler(event, context):
     return handle_request(app, event, context)
-
 
 
