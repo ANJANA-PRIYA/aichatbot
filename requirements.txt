@@ -3,11 +3,4 @@ google-generativeai
 python-dotenv
 flask
 serverless-wsgi
-
- HEAD
 flask-cors
-
-
-
-flask-cors 
- c250c0b (Updated app.py, HTML, and server.js for deployment)
