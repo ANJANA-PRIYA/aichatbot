@@ -1,4 +1,6 @@
 console.log("Script.js loaded!");
+console.log("Message Sent:", userMsg);
+
 
 // Counter to assign unique IDs to bot messages
 let messageCount = 0;
