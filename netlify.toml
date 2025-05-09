@@ -1,10 +1,9 @@
 [build]
   functions = "netlify-functions"
   command = "pip install -r requirements.txt"
-  publish = "public"
 
 [[redirects]]
-  from = "/get"
+  from = "/api/*"
   to = "/.netlify/functions/flask-function"
-  method = "POST"
-  status = 200 
+  status = 200
+
