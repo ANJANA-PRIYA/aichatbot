@@ -9,6 +9,14 @@ def index():
 
 @app.route('/api/get', methods=['POST'])
 def get_response():
+    print("Received request")
+    data = request.form
+    user_msg = data.get('msg', '')
+    print(f"User said: {user_msg}")
+    return jsonify({'text': f'You said: {user_msg}'})
+
+@app.route('/api/get', methods=['POST'])
+def get_response():
     data = request.form
     user_msg = data.get('msg', '')
     return jsonify({'text': f'You said: {user_msg}'})
