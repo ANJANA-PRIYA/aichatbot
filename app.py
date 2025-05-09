@@ -5,13 +5,12 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html')  # This should be in the 'templates' folder
 
-@app.route('/api/get', methods=['POST'])  # Use POST method
+@app.route('/api/get', methods=['POST'])
 def get_response():
-    data = request.get_json()  # Read JSON from frontend
-    user_msg = data.get('msg', '')
-    return jsonify({'response': f'You said: {user_msg}'})  # Respond with JSON
+    user_msg = request.form.get('msg', '')
+    return jsonify({'response': f'You said: {user_msg}'})  # Use 'response' as the key
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
