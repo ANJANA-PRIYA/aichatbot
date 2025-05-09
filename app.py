@@ -1,5 +1,8 @@
 from flask import Flask, render_template, jsonify, request
 import os
+import os
+print("Current Working Directory:", os.getcwd())
+
 
 app = Flask(__name__)
 
